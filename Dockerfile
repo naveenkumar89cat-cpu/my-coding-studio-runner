@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PATH=/opt/kotlin/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/35.0.0:$PATH
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ default-jdk git curl unzip ca-certificates \
+    gcc g++ default-jdk gradle git curl unzip ca-certificates \
     rustc cargo nodejs npm \
     && rm -rf /var/lib/apt/lists/*
 
