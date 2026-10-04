@@ -4,6 +4,7 @@ import pathlib
 import shlex
 import subprocess
 import tempfile
+import base64
 import urllib.error
 import urllib.request
 
@@ -171,12 +172,19 @@ async def api(request: Request):
 
             if action == "android-build":
                 gradlew = root / "gradlew"
-                if not gradlew.exists():
-                    return JSONResponse({"error": "gradlew not found in project"}, status_code=400)
-                os.chmod(gradlew, 0o755)
-                rc, output = run_command(["./gradlew", "assembleDebug", "--no-daemon"], root, timeout=600)
-                apks = [str(p.relative_to(root)) for p in root.rglob("*.apk")]
-                return JSONResponse({"output": output, "exit_code": rc, "apks": apks}, status_code=200 if rc == 0 else 400)
+                if gradlew.exists():
+                    os.chmod(gradlew, 0o755)
+                    cmd = ["./gradlew", "assembleDebug", "--no-daemon"]
+                else:
+                    cmd = ["gradle", "assembleDebug", "--no-daemon"]
+                rc, output = run_command(cmd, root, timeout=600)
+                apk_files = list(root.rglob("*.apk"))
+                payload = {"output": output, "exit_code": rc, "apks": [str(p.relative_to(root)) for p in apk_files]}
+                if rc == 0 and apk_files:
+                    apk = apk_files[0]
+                    payload["apk_name"] = apk.name
+                    payload["apk_base64"] = base64.b64encode(apk.read_bytes()).decode("ascii")
+                return JSONResponse(payload, status_code=200 if rc == 0 and apk_files else 400)
 
             return JSONResponse({"error": "Unknown action"}, status_code=400)
         finally:

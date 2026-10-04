@@ -1,13 +1,7 @@
-# My Coding Studio Final Runner
+# My Coding Studio Web — Python Browser Runtime
 
-Includes C/C++, Java, Kotlin, Python, Node.js, Rust/Cargo, Git, Android SDK platform/build-tools 35, and an OpenAI-compatible AI proxy.
+Base: Consolidated V2.
 
-Render AI environment variables (do not put secrets in source):
-- AI_API_URL: OpenAI-compatible chat completions endpoint
-- AI_API_KEY: provider secret key
-- AI_MODEL: model name
+Added Python `.py` execution in the browser using Pyodide WebAssembly in a module Web Worker. JavaScript, Google Drive, editor, import/export, snapshots, output panel, AI endpoint and optional cloud-runner fallback are preserved.
 
-Website AI endpoint should be:
-https://my-coding-studio-runner.onrender.com/ai
-
-Android Build expects a real Gradle Android project including gradlew + wrapper files in the Studio workspace. The runner returns discovered APK paths after assembleDebug, but the current website may need a later download-artifact route to retrieve the APK binary.
+Python first run downloads the Pyodide runtime from the official recommended jsDelivr CDN path, so internet is required for the first load; the browser may cache it afterward. Browser/WASM networking has browser/CORS/socket limitations.
